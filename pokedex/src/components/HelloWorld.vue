@@ -2,28 +2,29 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-var name = ref("")
+var completePokemonData = ref({})
+const captureName = ref('')
+var showHide = ref(false)
+const image = ref({})
 
-const pokemonInfos = () => axios.get('https://pokeapi.co/api/v2/pokemon/ditto')
+const pokemonInfos = (props) => axios.get('https://pokeapi.co/api/v2/pokemon/'+props.toLowerCase())
   .then((response) => {
-    // console.log(response.data)
+    completePokemonData.value = response.data
+    image.value = completePokemonData.value.sprites.other.home.front_default
+    showHide.value = true
   })
-pokemonInfos()
 
-const captureName = (formText) => {
-  name = formText.data
-  console.log("entrou?", formText)
-}
-
-
-console.log("name: ",name)
 </script>
 
 <template>
   <div>
-    <input @input="captureName" placeholder="ENTER to search"  />
+    <h1>POKÉDEX</h1>
+    <input v-model="captureName" @keydown.enter="pokemonInfos(captureName)" placeholder="ENTER to search"  />
     <!-- <button v-on:click="captureName(pokemonName)">Search</button> -->
-    <p>{{name}}</p>
+    <!-- <p>{{completePokemonData.other.home.front_default}}</p> -->
+    <div>
+      <img v-if=showHide :src=image />
+    </div>
   </div>
 </template>
 
